@@ -5,6 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Scheduler\DisruptionCheckerJob.cs" />
+    <Compile Remove="Scheduler\JobFactory.cs" />
+    <Compile Remove="Scheduler\JobScheduler.cs" />
+    <Compile Remove="Scheduler\QuartzJobFactory.cs" />
+    <Compile Remove="Scheduler\QuartzServicesUtilities.cs" />
+    <Compile Remove="Scheduler\SchedulerHostedService.cs" />
+    <Compile Remove="Scheduler\SomeTask.cs" />
+    <Compile Remove="Scheduler\TaskScheduler.cs" />
+    <Compile Remove="Scheduler\UseQuartz.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -13,9 +25,15 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
     <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="6.10.6" />
+    <PackageReference Include="Quartz" Version="3.0.2" />
   </ItemGroup>
 
   <ItemGroup>

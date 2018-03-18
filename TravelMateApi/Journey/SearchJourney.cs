@@ -6,7 +6,6 @@ namespace TravelMateApi.Journey
 {
     public class SearchJourney
     {
-        private const string BaseUrl = "https://api.tfl.gov.uk";
         private readonly string _startLocation;
         private readonly string _endLocation;
 
@@ -19,7 +18,7 @@ namespace TravelMateApi.Journey
         public string Search()
         {
             var apiConnect = new ApiConnect();
-            var url = $@"{BaseUrl}/Journey/JourneyResults/{_startLocation}/to/{_endLocation}";
+            var url = UrlFactory.GetJourneys(_startLocation, _endLocation);
             var json = apiConnect.GetJson(url);
             var result = JsonConvert.DeserializeObject<JourneySearch>(json.Result);
             var serializeObject = JsonConvert.SerializeObject(result);

@@ -9,7 +9,6 @@ namespace TravelMateApi.Journey
 {
     public class SelectJourney
     {
-        private const string BaseUrl = "https://api.tfl.gov.uk";
         private readonly int _pos;
         private readonly string _startLocation;
         private readonly string _endLocation;
@@ -26,7 +25,7 @@ namespace TravelMateApi.Journey
         public void Select()
         {
             var apiConnect = new ApiConnect();
-            var url = $@"{BaseUrl}/Journey/JourneyResults/{_startLocation}/to/{_endLocation}";
+            var url = UrlFactory.GetJourneys(_startLocation, _endLocation);
             var json = apiConnect.GetJson(url);
             var result = JsonConvert.DeserializeObject<JourneySearch>(json.Result);
             //var selectedResult = result.Journeys[_pos];
@@ -50,9 +49,11 @@ namespace TravelMateApi.Journey
 
         private void UpdateLines(IEnumerable<Line> lines)
         {
-            var dbLines = lines.Select(line => new DbLine { LineId = line.Id, Name = line.Name });
             var databaseFactory = new DatabaseFactory();
+            var dbLines = lines.Select(line => new DbLine { LineId = line.Id, Name = line.Name });
             databaseFactory.SaveLines(dbLines);
+            var dbJourneyLines = lines.Select(line => new DbJourneyLine { Uid = _uid, ModeId = line.Name });
+            databaseFactory.SaveJourneyLines(dbJourneyLines);
         }
     }
 }
