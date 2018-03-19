@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Routing;
-
-namespace TravelMateApi.Models
+﻿namespace TravelMateApi.Models
 {
     public class GJourney
     {
@@ -13,12 +7,12 @@ namespace TravelMateApi.Models
 
     public class GRoute
     {
-        public GJourneyLeg[] legs;
+        public GLeg[] legs;
     }
 
-    public class GJourneyLeg
+    public class GLeg
     {
-        public GStep steps;
+        public GStep[] steps;
     }
 
     public class GTransitDetails
@@ -34,6 +28,7 @@ namespace TravelMateApi.Models
 
     public class GStep
     {
+        public string html_instructions;
         public GTransitDetails transit_details;
     }
 }

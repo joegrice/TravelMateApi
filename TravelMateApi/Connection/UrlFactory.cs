@@ -30,7 +30,7 @@ namespace TravelMateApi.Connection
         public static string GetGoogleJourneys(string startLocation, string endLocation)
         {
             const string directionsBaseUrl = "https://maps.googleapis.com/maps/api/directions/";
-            return $@"{directionsBaseUrl}json?origin={startLocation}&destination={endLocation}&mode=transit&departure_time=1521465127&key={Credentials.GoogleApiKey}";
+            return $@"{directionsBaseUrl}json?origin={startLocation}&destination={endLocation}&mode=transit&alternatives=true&key={Credentials.GoogleApiKey}";
         }
     }
 }

@@ -25,13 +25,13 @@ namespace TravelMateApi.Journey
         public void Select()
         {
             var apiConnect = new ApiConnect();
-            var url = UrlFactory.GetJourneys(_startLocation, _endLocation);
+            var url = UrlFactory.GetGoogleJourneys(_startLocation, _endLocation);
             var json = apiConnect.GetJson(url);
-            var result = JsonConvert.DeserializeObject<JourneySearch>(json.Result);
+            var result = JsonConvert.DeserializeObject<GJourney>(json.Result);
             //var selectedResult = result.Journeys[_pos];
             //var serializeObject = JsonConvert.SerializeObject(selectedResult);
             SaveJourney();
-            UpdateLines(result.Lines);
+            //UpdateLines(result.Lines);
         }
 
         private void SaveJourney()
