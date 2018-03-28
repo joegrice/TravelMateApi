@@ -12,6 +12,8 @@
 
     public class GLeg
     {
+        public string end_address;
+        public string start_address;
         public GStep[] steps;
     }
 

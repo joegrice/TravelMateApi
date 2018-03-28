@@ -2,9 +2,9 @@
 {
     public class RealTimeDisruption
     {
-        public string Uid;
+        public int JourneyId;
         public string Token;
-        public string ModeId;
+        public int LineId;
         public string Description;
     }
 }

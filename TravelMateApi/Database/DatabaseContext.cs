@@ -22,8 +22,8 @@ namespace TravelMateApi.Database
             modelBuilder.Entity<DbJourney>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Uid).IsRequired();
-                entity.Property(e => e.Position).IsRequired();
+                entity.Property(e => e.AccountId).IsRequired();
+                entity.Property(e => e.Route).IsRequired();
                 entity.Property(e => e.StartLocation).IsRequired();
                 entity.Property(e => e.EndLocation).IsRequired();
             });
@@ -31,7 +31,6 @@ namespace TravelMateApi.Database
             modelBuilder.Entity<DbLine>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.LineId).IsRequired();
                 entity.Property(e => e.Name).IsRequired();
             });
 
@@ -45,7 +44,7 @@ namespace TravelMateApi.Database
             modelBuilder.Entity<DbJourneyLine>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Uid);
+                entity.Property(e => e.JourneyId);
                 entity.Property(e => e.ModeId);
             });
         }

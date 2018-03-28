@@ -1,4 +1,3 @@
-using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using TravelMateApi.Journey;
 
@@ -16,9 +15,9 @@ namespace TravelMateApi.Controllers
         }
 
         [HttpPut("select")]
-        public void Search([FromQuery] string uid, [FromQuery]int pos, [FromQuery]string startlocation, [FromQuery]string endlocation)
+        public void Search([FromQuery] string uid, [FromQuery] string route, [FromQuery] string startlocation, [FromQuery] string endlocation)
         {
-            var getJourney = new SelectJourney(uid ,pos, startlocation, endLocation: endlocation);
+            var getJourney = new SelectJourney(uid, route, startlocation, endlocation);
             getJourney.Select();
         }
     }

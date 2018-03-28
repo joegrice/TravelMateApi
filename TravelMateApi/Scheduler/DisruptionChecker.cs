@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MoreLinq;
 using Newtonsoft.Json;
 using Quartz;
 using TravelMateApi.Connection;
 using TravelMateApi.Database;
 using TravelMateApi.Models;
+using TravelMateApi.Notification;
 
 namespace TravelMateApi.Scheduler
 {
     public class DisruptionChecker : IJob
     {
+        private DatabaseFactory _databaseFactory;
+
         private readonly List<string> _modes = new List<string>
         {
             "bus",
@@ -34,91 +35,81 @@ namespace TravelMateApi.Scheduler
 
         public Task Execute(IJobExecutionContext context)
         {
-            var databaseFactory = new DatabaseFactory();
-            var dbLines = databaseFactory.GetLines();
+            _databaseFactory = new DatabaseFactory();
+            var dbLines = _databaseFactory.GetLines();
 
             var apiConnect = new ApiConnect();
-            var savedIds = dbLines.Select(line => line.LineId).ToList();
-            //var url = UrlFactory.DisruptionsForGivenLineIds(ids);
-            //var json = apiConnect.GetJson(url);
-            //var result = JsonConvert.DeserializeObject<LineDisruption[]>(json.Result);
             var url = UrlFactory.DisruptionsForGivenModes(_modes);
             var json = apiConnect.GetJson(url);
             var result = JsonConvert.DeserializeObject<LineDisruption[]>(json.Result);
+            var realTimeDisruptions = GetRealTimeDisruptions(dbLines, result);
+            var finalTokensForNotifications = GetNotificationTokens(realTimeDisruptions);
 
-
-
-            /*var realTimeDisruptions =
-                result.Where(disruption => disruption.Category.Equals(DisruptionCategories.RealTime)
-                && savedIds.Exists(id => Regex.IsMatch(disruption.Description, @"\b" + id + @"\b", RegexOptions.IgnoreCase))).ToList();*/
-
-
-            var realTimeDisruptions = new List<RealTimeDisruption>();
-            foreach (var lineDisruption in result)
+            if (finalTokensForNotifications.Any())
             {
-                if (lineDisruption.Category.Equals(DisruptionCategories.RealTime))
-                {
-                    foreach (var savedId in savedIds)
-                    {
-                        if (Regex.IsMatch(lineDisruption.Description, @"\b" + savedId + @"\b", RegexOptions.IgnoreCase))
-                        {
-                            var realTimeDisruption = new RealTimeDisruption
-                            {
-                                ModeId = savedId,
-                                Description = lineDisruption.Description
-                            };
-                            realTimeDisruptions.Add(realTimeDisruption);
-                        }
-                    }
-                }
+                NotifyUsers(finalTokensForNotifications);
             }
-
-            var tokensForNotifications = databaseFactory.GetDisruptionTokens(realTimeDisruptions);
-            foreach (var tokenForNotification in tokensForNotifications)
+            else
             {
-                var account = databaseFactory.GetAccountByUid(tokenForNotification.Uid);
-                tokenForNotification.Token = account.Token;
+                Console.WriteLine("JOB UPDATE: No Notifications Sent");
             }
-
-            if (tokensForNotifications.Any())
-            {
-                foreach (var tokenForNotification in tokensForNotifications)
-                {
-                    var sendResult = SendNotificationFromFirebaseCloud(tokenForNotification.Token, tokenForNotification.Description,
-                        realTimeDisruptions[0].Description);
-                    Console.WriteLine(sendResult);
-                }
-            }
-
-            Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
 
             return Task.FromResult(0);
         }
 
-        private string SendNotificationFromFirebaseCloud(string token, string title, string desc)
+        private static void NotifyUsers(List<RealTimeDisruption> finalTokensForNotifications)
         {
-            var result = "-1";
-            const string webAddr = "https://fcm.googleapis.com/fcm/send";
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Headers.Add(HttpRequestHeader.Authorization, "key=" + Credentials.FirebaseServerKey);
-            httpWebRequest.Method = "POST";
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            var notificationFactory = new NotificationFactory();
+            foreach (var tokenForNotification in finalTokensForNotifications)
             {
-                var data = new AData(desc, desc);
-                var notification = new ANotification(title);
-                var androidNotification = new AndroidNotification(token, data, notification);
-                var androidNotificationJson = JsonConvert.SerializeObject(androidNotification);
-                streamWriter.Write(androidNotificationJson);
-                streamWriter.Flush();
+                var androidMessage = new AndroidMessage(tokenForNotification.Token,
+                    tokenForNotification.Description);
+                var sendResult = notificationFactory.SendNotification(androidMessage);
+                Console.WriteLine("JOB UPDATE: Notification Result - " + sendResult);
+            }
+        }
+
+        private List<RealTimeDisruption> GetNotificationTokens(IEnumerable<RealTimeDisruption> realTimeDisruptions)
+        {
+            var tokensForNotifications = _databaseFactory.GetDisruptionTokens(realTimeDisruptions).ToList();
+            foreach (var tokenForNotification in tokensForNotifications)
+            {
+                var account = _databaseFactory.GetAccountByJourneyId(tokenForNotification.JourneyId);
+                tokenForNotification.Token = account.Token;
             }
 
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            return tokensForNotifications.DistinctBy(token => new { token.Token, token.LineId }).ToList();
+        }
+
+        private static List<RealTimeDisruption> GetRealTimeDisruptions(IEnumerable<DbLine> dbLines, IEnumerable<LineDisruption> result)
+        {
+            var realTimeDisruptions = new List<RealTimeDisruption>();
+            var dbLinesList = dbLines.ToList();
+            foreach (var lineDisruption in result)
             {
-                result = streamReader.ReadToEnd();
+                if (lineDisruption.Category.Equals(DisruptionCategories.RealTime))
+                {
+                    foreach (var dbLine in dbLinesList)
+                    {
+                        CreateRealTimeDisruption(realTimeDisruptions, lineDisruption, dbLine);
+                    }
+                }
             }
-            return result;
+
+            return realTimeDisruptions;
+        }
+
+        private static void CreateRealTimeDisruption(List<RealTimeDisruption> realTimeDisruptions, LineDisruption lineDisruption, DbLine dbLine)
+        {
+            if (Regex.IsMatch(lineDisruption.Description, @"\b" + dbLine.Name + @"\b",RegexOptions.IgnoreCase))
+            {
+                var realTimeDisruption = new RealTimeDisruption
+                {
+                    LineId = dbLine.Id,
+                    Description = lineDisruption.Description
+                };
+                realTimeDisruptions.Add(realTimeDisruption);
+            }
         }
     }
 }
