@@ -1,0 +1,43 @@
+[
+    {
+        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+        "category": "Information",
+        "type": "specialService",
+        "categoryDescription": "Information",
+        "description": "http://www.nationalrail.co.uk/",
+        "additionalInfo": "Custom",
+        "affectedRoutes": [],
+        "affectedStops": [],
+        "closureText": "specialService"
+    },
+    {
+        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+        "category": "RealTime",
+        "type": "lineInfo",
+        "categoryDescription": "RealTime",
+        "description": "Docklands Light Railway: No service due to strike action. A reduced service will resume tomorrow. Your tickets will be accepted on the local buses and the Underground and Overground. ",
+        "affectedRoutes": [],
+        "affectedStops": [],
+        "closureText": "serviceClosed"
+    },
+    {
+        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+        "category": "RealTime",
+        "type": "routeInfo",
+        "categoryDescription": "RealTime",
+        "description": "Metropolitan Line: Severe delays between Wembley Park and Aldgate while we fix a signal failure at Baker Street. GOOD SERVICE on the rest of the line. ",
+        "affectedRoutes": [],
+        "affectedStops": [],
+        "closureText": "severeDelays"
+    },
+    {
+        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+        "category": "RealTime",
+        "type": "lineInfo",
+        "categoryDescription": "RealTime",
+        "description": "Victoria Line: No service between Seven Sisters and Walthamstow Central only, while we fix a signal failure at Walthamstow Central. SEVERE DELAYS on the rest of the line. Tickets are being accepted on Greater Anglia, Great Northern, South Western trains, Southeastern and Local bus services. ",
+        "affectedRoutes": [],
+        "affectedStops": [],
+        "closureText": "severeDelays"
+    }
+]

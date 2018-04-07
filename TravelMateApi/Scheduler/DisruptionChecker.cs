@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -38,16 +39,19 @@ namespace TravelMateApi.Scheduler
             _databaseFactory = new DatabaseFactory();
             var dbLines = _databaseFactory.GetLines();
 
-            var apiConnect = new ApiConnect();
+            /*var apiConnect = new ApiConnect();
             var url = UrlFactory.DisruptionsForGivenModes(_modes);
-            var json = apiConnect.GetJson(url);
-            var result = JsonConvert.DeserializeObject<LineDisruption[]>(json.Result);
+            var json = apiConnect.GetJson(url);?*/
+            var path = Environment.CurrentDirectory + @"\Data\sample-disruption-data.json";
+            var json = File.ReadAllText(path);
+            //var result = JsonConvert.DeserializeObject<LineDisruption[]>(json.Result);
+            var result = JsonConvert.DeserializeObject<LineDisruption[]>(json);
             var realTimeDisruptions = GetRealTimeDisruptions(dbLines, result);
             var finalTokensForNotifications = GetNotificationTokens(realTimeDisruptions);
 
             if (finalTokensForNotifications.Any())
             {
-                NotifyUsers(finalTokensForNotifications);
+               NotifyUsers(finalTokensForNotifications);
             }
             else
             {
