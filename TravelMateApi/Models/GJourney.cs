@@ -2,6 +2,11 @@
 {
     public class GJourney
     {
+        public string from;
+        public string to;
+        public string time;
+        public string period;
+        public string status;
         public GRoute[] routes;
     }
 

@@ -26,6 +26,8 @@ namespace TravelMateApi.Database
                 entity.Property(e => e.Route).IsRequired();
                 entity.Property(e => e.StartLocation).IsRequired();
                 entity.Property(e => e.EndLocation).IsRequired();
+                entity.Property(e => e.Time).IsRequired();
+                entity.Property(e => e.Period).IsRequired();
             });
 
             modelBuilder.Entity<DbLine>(entity =>

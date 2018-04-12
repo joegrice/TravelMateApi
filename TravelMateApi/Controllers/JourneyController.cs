@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using TravelMateApi.Journey;
 
 namespace TravelMateApi.Controllers
@@ -15,10 +16,18 @@ namespace TravelMateApi.Controllers
         }
 
         [HttpPut("select")]
-        public void Search([FromQuery] string uid, [FromQuery] string route, [FromQuery] string startlocation, [FromQuery] string endlocation)
+        public void Select([FromQuery] string uid, [FromQuery] string route, [FromQuery] string startlocation, [FromQuery] string endlocation, [FromQuery] string time, [FromQuery] string period)
         {
-            var getJourney = new SelectJourney(uid, route, startlocation, endlocation);
+            var getJourney = new SelectJourney(uid, route, startlocation, endlocation, time, period);
             getJourney.Select();
+        }
+
+        [HttpGet("saved")]
+        public string Journeys([FromQuery] string uid)
+        {
+            var journeys = new SavedJourney(uid);
+            var json = JsonConvert.SerializeObject(journeys.GetUserSavedJourneys());
+            return json;
         }
     }
 }

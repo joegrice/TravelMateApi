@@ -49,7 +49,7 @@ namespace TravelMateApi.Database
                 context.Database.EnsureCreated();
                 foreach (var journeyLine in dbJourneyLines)
                 {
-                    context.JourneyLines.AddIfNotExists(journeyLine, dbjourneyLine 
+                    context.JourneyLines.AddIfNotExists(journeyLine, dbjourneyLine
                         => dbjourneyLine.JourneyId.Equals(journeyLine.JourneyId) && dbjourneyLine.ModeId.Equals(journeyLine.ModeId));
                 }
                 context.SaveChanges();
@@ -68,6 +68,34 @@ namespace TravelMateApi.Database
             }
 
             return dbLines;
+        }
+
+        public List<string> GetLinesForJourneyId(int journeyId)
+        {
+            var lineNames = new List<string>();
+            using (var context = new DatabaseContext())
+            {
+                var lineName = from journeyLine in context.JourneyLines
+                               join line in context.Lines on journeyLine.ModeId equals line.Id
+                               where journeyLine.JourneyId.Equals(journeyId)
+                               select line.Name;
+                lineNames.AddRange(lineName);
+            }
+            return lineNames;
+        }
+
+        public List<DbJourney> GetJourneysForUid(string uid)
+        {
+            var allDbJourneys = new List<DbJourney>();
+            using (var context = new DatabaseContext())
+            {
+                var dbJourneys = from dbJourney in context.Journeys
+                                 join account in context.Accounts on dbJourney.AccountId equals account.Id
+                                 where account.Uid.Equals(uid)
+                                 select dbJourney;
+                allDbJourneys.AddRange(dbJourneys);
+            }
+            return allDbJourneys;
         }
 
         public DbLine GetLine(string lineId)

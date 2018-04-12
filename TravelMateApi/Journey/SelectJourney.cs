@@ -12,14 +12,19 @@ namespace TravelMateApi.Journey
         private readonly string _route;
         private readonly string _startLocation;
         private readonly string _endLocation;
+        private readonly string _time;
+        private readonly string _period;
         private DbJourney _dbJourney;
 
-        public SelectJourney(string uid, string route, string startLocation, string endLocation)
+        public SelectJourney(string uid, string route, string startLocation, string endLocation, string time,
+            string period)
         {
             _uid = uid;
             _route = route;
             _startLocation = startLocation;
             _endLocation = endLocation;
+            _time = time;
+            _period = period;
         }
 
         public void Select()
@@ -49,7 +54,9 @@ namespace TravelMateApi.Journey
                 AccountId = dbAccount.Id,
                 Route = _route,
                 StartLocation = _startLocation,
-                EndLocation = _endLocation
+                EndLocation = _endLocation,
+                Time = _time,
+                Period = _period
             };
             databaseFactory.SaveJourneyToDb(_dbJourney);
             // Get journey from database to access journeyId
