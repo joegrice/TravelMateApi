@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using TravelMateApi.Database;
 using TravelMateApi.Models;
@@ -45,8 +46,8 @@ namespace TravelMateApi.Journey
                 journey.routes = arr;
             }
 
-            // TODO: USE TO POPULATE STATUS
-            var x = databaseFactory.GetLinesForJourneyId(dbJourney.Id);
+            var delayedLines = databaseFactory.GetJourneyDelayedLines(dbJourney.Id);
+            journey.status = delayedLines.Any() ? JourneyStatus.Delayed : JourneyStatus.GoodService;
 
             return journey;
         }

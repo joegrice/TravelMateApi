@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MoreLinq;
 using Newtonsoft.Json;
 using Quartz;
-using TravelMateApi.Connection;
 using TravelMateApi.Database;
 using TravelMateApi.Models;
 using TravelMateApi.Notification;
@@ -37,7 +35,8 @@ namespace TravelMateApi.Scheduler
         public Task Execute(IJobExecutionContext context)
         {
             _databaseFactory = new DatabaseFactory();
-            var dbLines = _databaseFactory.GetLines();
+            // Get saved lines to search for
+            var dbLines = _databaseFactory.GetLines().ToList();
 
             /*var apiConnect = new ApiConnect();
             var url = UrlFactory.DisruptionsForGivenModes(_modes);
@@ -46,74 +45,60 @@ namespace TravelMateApi.Scheduler
             var json = File.ReadAllText(path);
             //var result = JsonConvert.DeserializeObject<LineDisruption[]>(json.Result);
             var result = JsonConvert.DeserializeObject<LineDisruption[]>(json);
-            var realTimeDisruptions = GetRealTimeDisruptions(dbLines, result);
-            var finalTokensForNotifications = GetNotificationTokens(realTimeDisruptions);
-
-            if (finalTokensForNotifications.Any())
-            {
-               NotifyUsers(finalTokensForNotifications);
-            }
-            else
-            {
-                Console.WriteLine("JOB UPDATE: No Notifications Sent");
-            }
+            var realTimeDisruptions = result.Where(lineDisruption =>
+                lineDisruption.Category.Equals(DisruptionCategories.RealTime)).ToList();
+            var updatedLines = UpdateDelayedLines(dbLines, realTimeDisruptions);
+            UpdateGoodStatusLines(updatedLines);
+            SendNotificationsForDelayedLines();
 
             return Task.FromResult(0);
         }
 
-        private static void NotifyUsers(List<RealTimeDisruption> finalTokensForNotifications)
+        private void SendNotificationsForDelayedLines()
         {
+            var accounts = _databaseFactory.GetDisruptionNotificationsDetails();
             var notificationFactory = new NotificationFactory();
-            foreach (var tokenForNotification in finalTokensForNotifications)
+            foreach (var account in accounts)
             {
-                var androidMessage = new AndroidMessage(tokenForNotification.Token,
-                    tokenForNotification.Description);
-                var sendResult = notificationFactory.SendNotification(androidMessage);
-                Console.WriteLine("JOB UPDATE: Notification Result - " + sendResult);
+                var androidMessage = new AndroidMessage(account.Item1, account.Item3);
+                var result = notificationFactory.SendNotification(androidMessage);
+                Console.WriteLine(result);
+                _databaseFactory.MarkUsersNotifiedForLine(account.Item2);
             }
         }
 
-        private List<RealTimeDisruption> GetNotificationTokens(IEnumerable<RealTimeDisruption> realTimeDisruptions)
+        private List<DbLine> UpdateDelayedLines(IEnumerable<DbLine> dbLines,
+            IEnumerable<LineDisruption> lineDisruptions)
         {
-            var tokensForNotifications = _databaseFactory.GetDisruptionTokens(realTimeDisruptions).ToList();
-            foreach (var tokenForNotification in tokensForNotifications)
+            var updatedLines = new List<DbLine>();
+            foreach (var lineDisruption in lineDisruptions)
             {
-                var account = _databaseFactory.GetAccountByJourneyId(tokenForNotification.JourneyId);
-                tokenForNotification.Token = account.Token;
-            }
-
-            return tokensForNotifications.DistinctBy(token => new { token.Token, token.LineId }).ToList();
-        }
-
-        private static List<RealTimeDisruption> GetRealTimeDisruptions(IEnumerable<DbLine> dbLines, IEnumerable<LineDisruption> result)
-        {
-            var realTimeDisruptions = new List<RealTimeDisruption>();
-            var dbLinesList = dbLines.ToList();
-            foreach (var lineDisruption in result)
-            {
-                if (lineDisruption.Category.Equals(DisruptionCategories.RealTime))
+                foreach (var dbLine in dbLines)
                 {
-                    foreach (var dbLine in dbLinesList)
+                    if (CheckDisruptionForLine(lineDisruption, dbLine))
                     {
-                        CreateRealTimeDisruption(realTimeDisruptions, lineDisruption, dbLine);
+                        dbLine.IsDelayed = JourneyStatus.Delayed;
+                        dbLine.Description = lineDisruption.Description;
+                        _databaseFactory.UpdateLineDelayDetails(dbLine);
+                        updatedLines.Add(dbLine);
                     }
                 }
             }
 
-            return realTimeDisruptions;
+            return updatedLines;
         }
 
-        private static void CreateRealTimeDisruption(List<RealTimeDisruption> realTimeDisruptions, LineDisruption lineDisruption, DbLine dbLine)
+        private void UpdateGoodStatusLines(List<DbLine> dbLines)
         {
-            if (Regex.IsMatch(lineDisruption.Description, @"\b" + dbLine.Name + @"\b",RegexOptions.IgnoreCase))
-            {
-                var realTimeDisruption = new RealTimeDisruption
-                {
-                    LineId = dbLine.Id,
-                    Description = lineDisruption.Description
-                };
-                realTimeDisruptions.Add(realTimeDisruption);
-            }
+            var lineIds = dbLines.Select(line => line.Id).ToList();
+            _databaseFactory.UpdateGoodStatusLineDelayDetails(lineIds);
+        }
+
+        private bool CheckDisruptionForLine(LineDisruption lineDisruption, DbLine dbLine)
+        {
+            var isFound = Regex.IsMatch(lineDisruption.Description, @"\b" + dbLine.Name + @"\b",
+                RegexOptions.IgnoreCase);
+            return isFound;
         }
     }
 }
