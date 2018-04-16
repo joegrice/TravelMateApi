@@ -67,7 +67,7 @@ namespace TravelMateApi.Journey
         {
             lines = lines.ToList();
             var databaseFactory = new DatabaseFactory();
-            var dbLines = lines.Select(line => new DbLine { Name = line });
+            var dbLines = lines.Select(line => new DbLine { Name = line, IsDelayed = JourneyStatus.GoodService });
             databaseFactory.SaveLines(dbLines);
             var dbJourneyLines = lines.Select(line => new DbJourneyLine
             {
