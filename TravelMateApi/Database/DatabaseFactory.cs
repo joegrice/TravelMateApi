@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using MoreLinq;
 using TravelMateApi.Journey;
 using TravelMateApi.Models;
 
@@ -54,7 +55,7 @@ namespace TravelMateApi.Database
                 {
                     context.JourneyLines.AddIfNotExists(journeyLine, dbjourneyLine
                         => dbjourneyLine.JourneyId.Equals(journeyLine.JourneyId) &&
-                           dbjourneyLine.ModeId.Equals(journeyLine.ModeId));
+                           dbjourneyLine.LineId.Equals(journeyLine.LineId));
                 }
 
                 context.SaveChanges();
@@ -81,7 +82,7 @@ namespace TravelMateApi.Database
             using (var context = new DatabaseContext())
             {
                 var lineName = from journeyLine in context.JourneyLines
-                    join line in context.Lines on journeyLine.ModeId equals line.Id
+                    join line in context.Lines on journeyLine.LineId equals line.Id
                     where journeyLine.JourneyId.Equals(journeyId)
                     select line.Name;
                 lineNames.AddRange(lineName);
@@ -158,26 +159,31 @@ namespace TravelMateApi.Database
             }
         }
 
-        public List<Tuple<string, int, string>> GetDisruptionNotificationsDetails()
+        public List<Tuple<string, int, int, string>> GetDisruptionNotificationsDetails()
         {
-            var accountsList = new List<Tuple<string, int, string>>();
+            var accountsList = new List<Tuple<string, int, int, string>>();
             using (var context = new DatabaseContext())
             {
                 var accounts = from dbLine in context.Lines
-                    join dbJourneyLine in context.JourneyLines on dbLine.Id equals dbJourneyLine.ModeId
+                    join dbJourneyLine in context.JourneyLines on dbLine.Id equals dbJourneyLine.LineId
                     join dbJourney in context.Journeys on dbJourneyLine.JourneyId equals dbJourney.Id
                     join dbAccount in context.Accounts on dbJourney.AccountId equals dbAccount.Id
-                    where dbLine.IsDelayed.Equals(JourneyStatus.Delayed) && dbLine.UsersNotified.Equals(false.ToString()) &&
-                          TimeSpan.Compare(DateTime.Now.TimeOfDay, DateTime.ParseExact(dbJourney.Time, "HH:mm",
-                              CultureInfo.InvariantCulture).TimeOfDay) >= 0 &&
-                          TimeSpan.Compare(DateTime.Now.TimeOfDay, DateTime.ParseExact(dbJourney.Time, "HH:mm",
-                                  CultureInfo.InvariantCulture)
-                              .AddMinutes(double.Parse(dbJourney.Period)).TimeOfDay) <= 0
-                    select Tuple.Create(dbAccount.Token, dbLine.Id, dbLine.Description);
+                    where dbLine.IsDelayed.Equals(JourneyStatus.Delayed) && dbJourneyLine.Notified.Equals(false.ToString())
+                                              && IsCurrentTimeBetweenTimePlusPeriod(dbJourney.Time, dbJourney.Period)
+                               select Tuple.Create(dbAccount.Token, dbJourney.Id, dbLine.Id, dbLine.Description);
                 accountsList.AddRange(accounts);
             }
 
             return accountsList;
+        }
+
+        private bool IsCurrentTimeBetweenTimePlusPeriod(string time, string period)
+        {
+            var currentTime = DateTime.Now.TimeOfDay;
+            return currentTime >= DateTime.ParseExact(time, "HH:mm",
+                       CultureInfo.InvariantCulture).TimeOfDay &&
+                   currentTime <= DateTime.ParseExact(time, "HH:mm",
+                       CultureInfo.InvariantCulture).AddMinutes(int.Parse(period)).TimeOfDay;
         }
 
         public List<DbLine> GetJourneyDelayedLines(int journeyId)
@@ -187,7 +193,7 @@ namespace TravelMateApi.Database
             {
                 var delayed = from dbJourney in context.Journeys
                     join dbJourneyLine in context.JourneyLines on dbJourney.Id equals dbJourneyLine.JourneyId
-                    join dbLine in context.Lines on dbJourneyLine.ModeId equals dbLine.Id
+                    join dbLine in context.Lines on dbJourneyLine.LineId equals dbLine.Id
                     where dbJourney.Id == journeyId && dbLine.IsDelayed.Equals(JourneyStatus.Delayed)
                     select dbLine;
                 lines.AddRange(delayed);
@@ -196,14 +202,14 @@ namespace TravelMateApi.Database
             return lines;
         }
 
-        public void MarkUsersNotifiedForLine(int lineId)
+        public void MarkUsersNotifiedForLine(int journeyId, int lineId)
         {
             using (var context = new DatabaseContext())
             {
-                var dbLine = context.Lines.FirstOrDefault(line => line.Id == lineId);
-                if (dbLine != null)
+                var dbJourneyLine = context.JourneyLines.FirstOrDefault(line => line.LineId == lineId && line.JourneyId == journeyId);
+                if (dbJourneyLine != null)
                 {
-                    dbLine.UsersNotified = true.ToString();
+                    dbJourneyLine.Notified = true.ToString();
                     context.SaveChanges();
                 }
             }
@@ -218,7 +224,6 @@ namespace TravelMateApi.Database
                 {
                     result.Description = inputDbLine.Description;
                     result.IsDelayed = inputDbLine.IsDelayed;
-                    result.UsersNotified = false.ToString();
                 }
 
                 context.SaveChanges();
@@ -234,7 +239,10 @@ namespace TravelMateApi.Database
                     if (lineIds.Contains(line.Id)) continue;
                     line.Description = "";
                     line.IsDelayed = JourneyStatus.GoodService;
-                    line.UsersNotified = false.ToString();
+                    var dbJourneyLines = from dbJourneyLine in context.JourneyLines
+                        where dbJourneyLine.LineId == line.Id && dbJourneyLine.Notified.Equals(true.ToString())
+                        select dbJourneyLine;
+                    dbJourneyLines.ForEach(dbJourneyLine => dbJourneyLine.Notified = false.ToString());
                 }
 
                 context.SaveChanges();

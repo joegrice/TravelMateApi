@@ -57,13 +57,14 @@ namespace TravelMateApi.Scheduler
         private void SendNotificationsForDelayedLines()
         {
             var accounts = _databaseFactory.GetDisruptionNotificationsDetails();
+            //_databaseFactory.MarkUsersNotifiedForLine(11, 2);
             var notificationFactory = new NotificationFactory();
             foreach (var account in accounts)
             {
-                var androidMessage = new AndroidMessage(account.Item1, account.Item3);
+                var androidMessage = new AndroidMessage(account.Item1, account.Item4);
                 var result = notificationFactory.SendNotification(androidMessage);
                 Console.WriteLine(result);
-                _databaseFactory.MarkUsersNotifiedForLine(account.Item2);
+                _databaseFactory.MarkUsersNotifiedForLine(account.Item2, account.Item3);
             }
         }
 

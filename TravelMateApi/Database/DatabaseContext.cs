@@ -36,7 +36,6 @@ namespace TravelMateApi.Database
                 entity.Property(e => e.Name).IsRequired();
                 entity.Property(e => e.Description);
                 entity.Property(e => e.IsDelayed).IsRequired();
-                entity.Property(e => e.UsersNotified);
             });
 
             modelBuilder.Entity<DbAccount>(entity =>
@@ -50,7 +49,8 @@ namespace TravelMateApi.Database
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.JourneyId);
-                entity.Property(e => e.ModeId);
+                entity.Property(e => e.LineId);
+                entity.Property(e => e.Notified);
             });
         }
     }

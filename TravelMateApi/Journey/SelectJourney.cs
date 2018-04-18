@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using MoreLinq;
 using Newtonsoft.Json;
 using TravelMateApi.Database;
 using TravelMateApi.Models;
@@ -72,7 +73,8 @@ namespace TravelMateApi.Journey
             var dbJourneyLines = lines.Select(line => new DbJourneyLine
             {
                 JourneyId = _dbJourney.Id,
-                ModeId = databaseFactory.GetLine(line).Id
+                LineId = databaseFactory.GetLine(line).Id,
+                Notified = false.ToString()
             });
             databaseFactory.SaveJourneyLines(dbJourneyLines);
         }
