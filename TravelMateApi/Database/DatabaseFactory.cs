@@ -22,6 +22,28 @@ namespace TravelMateApi.Database
             }
         }
 
+        public void DeleteJourney(int id)
+        {
+            using (var context = new DatabaseContext())
+            {
+                var journey = context.Journeys.FirstOrDefault(dbJourney => dbJourney.Id == id);
+                if (journey != null)
+                {
+                    context.Journeys.Remove(journey);
+                }
+                var journeyLines = from dbJourney in context.Journeys
+                                   join dbJourneyLine in context.JourneyLines on dbJourney.Id equals dbJourneyLine.JourneyId
+                                   where dbJourney.Id == id
+                                   select dbJourneyLine;
+                foreach (var dbJourneyLine in journeyLines)
+                {
+                    context.JourneyLines.Remove(dbJourneyLine);
+                }
+
+                context.SaveChanges();
+            }
+        }
+
         public DbJourney GetJourneyFromDb(DbJourney journey)
         {
             using (var context = new DatabaseContext())
@@ -82,9 +104,9 @@ namespace TravelMateApi.Database
             using (var context = new DatabaseContext())
             {
                 var lineName = from journeyLine in context.JourneyLines
-                    join line in context.Lines on journeyLine.LineId equals line.Id
-                    where journeyLine.JourneyId.Equals(journeyId)
-                    select line.Name;
+                               join line in context.Lines on journeyLine.LineId equals line.Id
+                               where journeyLine.JourneyId.Equals(journeyId)
+                               select line.Name;
                 lineNames.AddRange(lineName);
             }
 
@@ -97,9 +119,9 @@ namespace TravelMateApi.Database
             using (var context = new DatabaseContext())
             {
                 var dbJourneys = from dbJourney in context.Journeys
-                    join account in context.Accounts on dbJourney.AccountId equals account.Id
-                    where account.Uid.Equals(uid)
-                    select dbJourney;
+                                 join account in context.Accounts on dbJourney.AccountId equals account.Id
+                                 where account.Uid.Equals(uid)
+                                 select dbJourney;
                 allDbJourneys.AddRange(dbJourneys);
             }
 
@@ -149,7 +171,7 @@ namespace TravelMateApi.Database
                 }
                 else
                 {
-                    var dbAcc = new DbAccount {Token = token, Uid = uid};
+                    var dbAcc = new DbAccount { Token = token, Uid = uid };
                     context.Accounts.Add(dbAcc);
                     Console.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture) +
                                       " - Account Created For User: " + uid);
@@ -165,11 +187,11 @@ namespace TravelMateApi.Database
             using (var context = new DatabaseContext())
             {
                 var accounts = from dbLine in context.Lines
-                    join dbJourneyLine in context.JourneyLines on dbLine.Id equals dbJourneyLine.LineId
-                    join dbJourney in context.Journeys on dbJourneyLine.JourneyId equals dbJourney.Id
-                    join dbAccount in context.Accounts on dbJourney.AccountId equals dbAccount.Id
-                    where dbLine.IsDelayed.Equals(JourneyStatus.Delayed) && dbJourneyLine.Notified.Equals(false.ToString())
-                                              && IsCurrentTimeBetweenTimePlusPeriod(dbJourney.Time, dbJourney.Period)
+                               join dbJourneyLine in context.JourneyLines on dbLine.Id equals dbJourneyLine.LineId
+                               join dbJourney in context.Journeys on dbJourneyLine.JourneyId equals dbJourney.Id
+                               join dbAccount in context.Accounts on dbJourney.AccountId equals dbAccount.Id
+                               where dbLine.IsDelayed.Equals(JourneyStatus.Delayed) && dbJourneyLine.Notified.Equals(false.ToString())
+                                                         && IsCurrentTimeBetweenTimePlusPeriod(dbJourney.Time, dbJourney.Period)
                                select Tuple.Create(dbAccount.Token, dbJourney.Id, dbLine.Id, dbLine.Description);
                 accountsList.AddRange(accounts);
             }
@@ -192,10 +214,10 @@ namespace TravelMateApi.Database
             using (var context = new DatabaseContext())
             {
                 var delayed = from dbJourney in context.Journeys
-                    join dbJourneyLine in context.JourneyLines on dbJourney.Id equals dbJourneyLine.JourneyId
-                    join dbLine in context.Lines on dbJourneyLine.LineId equals dbLine.Id
-                    where dbJourney.Id == journeyId && dbLine.IsDelayed.Equals(JourneyStatus.Delayed)
-                    select dbLine;
+                              join dbJourneyLine in context.JourneyLines on dbJourney.Id equals dbJourneyLine.JourneyId
+                              join dbLine in context.Lines on dbJourneyLine.LineId equals dbLine.Id
+                              where dbJourney.Id == journeyId && dbLine.IsDelayed.Equals(JourneyStatus.Delayed)
+                              select dbLine;
                 lines.AddRange(delayed);
             }
 
@@ -240,8 +262,8 @@ namespace TravelMateApi.Database
                     line.Description = "";
                     line.IsDelayed = JourneyStatus.GoodService;
                     var dbJourneyLines = from dbJourneyLine in context.JourneyLines
-                        where dbJourneyLine.LineId == line.Id && dbJourneyLine.Notified.Equals(true.ToString())
-                        select dbJourneyLine;
+                                         where dbJourneyLine.LineId == line.Id && dbJourneyLine.Notified.Equals(true.ToString())
+                                         select dbJourneyLine;
                     dbJourneyLines.ForEach(dbJourneyLine => dbJourneyLine.Notified = false.ToString());
                 }
 

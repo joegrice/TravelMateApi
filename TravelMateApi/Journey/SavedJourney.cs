@@ -34,6 +34,7 @@ namespace TravelMateApi.Journey
         {
             var journey = new GJourney
             {
+                id = dbJourney.Id,
                 name = dbJourney.Name,
                 from = dbJourney.StartLocation,
                 to = dbJourney.EndLocation,

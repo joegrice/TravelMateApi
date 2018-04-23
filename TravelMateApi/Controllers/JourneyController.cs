@@ -30,5 +30,12 @@ namespace TravelMateApi.Controllers
             var json = JsonConvert.SerializeObject(journeys.GetUserSavedJourneys());
             return json;
         }
+
+        [HttpDelete("delete")]
+        public void Delete([FromQuery] string id)
+        {
+            var deleteJourney = new DeleteJourney(id);
+            deleteJourney.Delete();
+        }
     }
 }
