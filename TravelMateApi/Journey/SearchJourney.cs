@@ -15,14 +15,12 @@ namespace TravelMateApi.Journey
             _endLocation = endLocation;
         }
 
-        public string Search()
+        public GJourney Search()
         {
             var apiConnect = new ApiConnect();
             var url = UrlFactory.GetGoogleJourneys(_startLocation, _endLocation);
             var json = apiConnect.GetJson(url);
-            var result = JsonConvert.DeserializeObject<GJourney>(json.Result);
-            var serializeObject = JsonConvert.SerializeObject(result);
-            return serializeObject;
+            return JsonConvert.DeserializeObject<GJourney>(json.Result);
         }
     }
 }

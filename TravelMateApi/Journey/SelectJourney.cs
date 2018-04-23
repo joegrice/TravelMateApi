@@ -10,6 +10,7 @@ namespace TravelMateApi.Journey
     public class SelectJourney
     {
         private readonly string _uid;
+        private readonly string _name;
         private readonly string _route;
         private readonly string _startLocation;
         private readonly string _endLocation;
@@ -17,10 +18,12 @@ namespace TravelMateApi.Journey
         private readonly string _period;
         private DbJourney _dbJourney;
 
-        public SelectJourney(string uid, string route, string startLocation, string endLocation, string time,
+        public SelectJourney(string uid, string name, string route, string startLocation, string endLocation,
+            string time,
             string period)
         {
             _uid = uid;
+            _name = name;
             _route = route;
             _startLocation = startLocation;
             _endLocation = endLocation;
@@ -53,6 +56,7 @@ namespace TravelMateApi.Journey
             _dbJourney = new DbJourney
             {
                 AccountId = dbAccount.Id,
+                Name = _name,
                 Route = _route,
                 StartLocation = _startLocation,
                 EndLocation = _endLocation,

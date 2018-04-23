@@ -2,12 +2,14 @@
 {
     public class GJourney
     {
+        public string name;
         public string from;
         public string to;
         public string time;
         public string period;
         public string status;
         public GRoute[] routes;
+        public DbLine[] disruptedLines;
     }
 
     public class GRoute

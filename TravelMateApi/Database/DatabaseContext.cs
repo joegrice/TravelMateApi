@@ -22,6 +22,7 @@ namespace TravelMateApi.Database
             modelBuilder.Entity<DbJourney>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired();
                 entity.Property(e => e.AccountId).IsRequired();
                 entity.Property(e => e.Route).IsRequired();
                 entity.Property(e => e.StartLocation).IsRequired();

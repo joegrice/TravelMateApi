@@ -12,13 +12,14 @@ namespace TravelMateApi.Controllers
         {
             var getJourney = new SearchJourney(startlocation, endlocation);
             var resultSearchJourney = getJourney.Search();
-            return resultSearchJourney;
+            var json = JsonConvert.SerializeObject(resultSearchJourney);
+            return json;
         }
 
         [HttpPut("select")]
-        public void Select([FromQuery] string uid, [FromQuery] string route, [FromQuery] string startlocation, [FromQuery] string endlocation, [FromQuery] string time, [FromQuery] string period)
+        public void Select([FromQuery] string uid, [FromQuery] string name, [FromQuery] string route, [FromQuery] string startlocation, [FromQuery] string endlocation, [FromQuery] string time, [FromQuery] string period)
         {
-            var getJourney = new SelectJourney(uid, route, startlocation, endlocation, time, period);
+            var getJourney = new SelectJourney(uid, name, route, startlocation, endlocation, time, period);
             getJourney.Select();
         }
 

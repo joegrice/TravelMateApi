@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
+        public string Name { get; set; }
         public string Route { get; set; }
         public string StartLocation { get; set; }
         public string EndLocation { get; set; }

@@ -34,6 +34,7 @@ namespace TravelMateApi.Journey
         {
             var journey = new GJourney
             {
+                name = dbJourney.Name,
                 from = dbJourney.StartLocation,
                 to = dbJourney.EndLocation,
                 time = dbJourney.Time,
@@ -47,7 +48,17 @@ namespace TravelMateApi.Journey
             }
 
             var delayedLines = databaseFactory.GetJourneyDelayedLines(dbJourney.Id);
-            journey.status = delayedLines.Any() ? JourneyStatus.Delayed : JourneyStatus.GoodService;
+            if (delayedLines.Any())
+            {
+                journey.status = JourneyStatus.Delayed;
+                journey.disruptedLines = delayedLines.ToArray();
+                /*var searchJourney = new SearchJourney(dbJourney.StartLocation, dbJourney.EndLocation);
+                journey.routes = searchJourney.Search().routes;*/
+            }
+            else
+            {
+                journey.status = JourneyStatus.GoodService;
+            }
 
             return journey;
         }

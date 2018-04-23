@@ -1,43 +1,164 @@
 [
-    {
-        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
-        "category": "Information",
-        "type": "specialService",
-        "categoryDescription": "Information",
-        "description": "http://www.nationalrail.co.uk/",
-        "additionalInfo": "Custom",
-        "affectedRoutes": [],
-        "affectedStops": [],
-        "closureText": "specialService"
-    },
-    {
-        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
-        "category": "RealTime",
-        "type": "lineInfo",
-        "categoryDescription": "RealTime",
-        "description": "Docklands Light Railway: No service due to strike action. A reduced service will resume tomorrow. Your tickets will be accepted on the local buses and the Underground and Overground. ",
-        "affectedRoutes": [],
-        "affectedStops": [],
-        "closureText": "serviceClosed"
-    },
-    {
-        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
-        "category": "RealTime",
-        "type": "routeInfo",
-        "categoryDescription": "RealTime",
-        "description": "Metropolitan Line: Severe delays between Wembley Park and Aldgate while we fix a signal failure at Baker Street. GOOD SERVICE on the rest of the line. ",
-        "affectedRoutes": [],
-        "affectedStops": [],
-        "closureText": "severeDelays"
-    },
-    {
-        "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
-        "category": "RealTime",
-        "type": "lineInfo",
-        "categoryDescription": "RealTime",
-        "description": "Victoria Line: No service between Seven Sisters and Walthamstow Central only, while we fix a signal failure at Walthamstow Central. SEVERE DELAYS on the rest of the line. Tickets are being accepted on Greater Anglia, Great Northern, South Western trains, Southeastern and Local bus services. ",
-        "affectedRoutes": [],
-        "affectedStops": [],
-        "closureText": "severeDelays"
-    }
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "minorDelays",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Minor delays on some routes",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "minorDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "specialService",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Custom",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "specialService"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "specialService",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Custom",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "specialService"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "minorDelays",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Minor delays on some routes",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "minorDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "minorDelays",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Minor delays on some routes",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "minorDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "specialService",
+    "categoryDescription": "Information",
+    "description": "http://www.nationalrail.co.uk/",
+    "additionalInfo": "Custom",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "specialService"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "RealTime",
+    "type": "routeInfo",
+    "categoryDescription": "RealTime",
+    "description": "Piccadilly Line: Severe delays between Acton Town and Heathrow Airport / Uxbridge and MINOR DELAYS between Arnos Grove and Cockfosters due to an earlier signal failure at Northfields. Tickets are being accepted on local buses. ",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "minorDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "RealTime",
+    "type": "routeInfo",
+    "categoryDescription": "RealTime",
+    "description": "Piccadilly Line: Severe delays between Acton Town and Heathrow Airport / Uxbridge and MINOR DELAYS between Arnos Grove and Cockfosters due to an earlier signal failure at Northfields. Tickets are being accepted on local buses. ",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "severeDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "RealTime",
+    "type": "routeInfo",
+    "categoryDescription": "RealTime",
+    "description": "Piccadilly Line: Severe delays between Acton Town and Heathrow Airport / Uxbridge and MINOR DELAYS between Arnos Grove and Cockfosters due to an earlier signal failure at Northfields. Tickets are being accepted on local buses. ",
+    "affectedRoutes": [],
+    "affectedStops": [],
+    "closureText": "severeDelays"
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "lineInfo",
+    "categoryDescription": "Information",
+    "description": "From 23:30 on Monday 6 November 2017 until late November 2018, Liverpool Street bus station is closed. Route N133 starts and finishes at Old Broad Street / London Wall, near Liverpool Street station. For more details visit tfl.gov.uk/TempBusChanges",
+    "created": "2017-11-06T10:49:00Z",
+    "lastUpdate": "2017-11-13T11:13:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "stopInfo",
+    "categoryDescription": "Information",
+    "description": "MARTINS CORNER / VALENCE AVENUE, STOP ED: Please note that this bus stop is unsuitable for wheelchair users. The previous stop (EC) at Bennetts Castle Lane is wheelchair accessible for Route 145 towards Dagenham, Asda and 364 towards Dagenham East, also Stop SD at Parsloes Avenue is available for Route 145 and Stop SL at Cornwallis Road is available for Route 364.",
+    "created": "2017-03-27T14:30:00Z",
+    "lastUpdate": "2017-03-27T14:35:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "stopInfo",
+    "categoryDescription": "Information",
+    "description": "CHURCH ELM LANE, STOP J: Please note that this bus stop is unsuitable for wheelchair users. The previous stop (E) at Dagenham Heathway is accessible for Route 173 towards Beckton, Route 174 towards Marsh Way, Route 175 towards New Road and Route 673 towards Beckton",
+    "created": "2017-03-27T14:44:00Z",
+    "lastUpdate": "2017-03-27T14:45:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "Information",
+    "type": "stopInfo",
+    "categoryDescription": "Information",
+    "description": "GREEN SIDE, STOP J: Please note that this bus stop is unsuitable for wheelchair users. The previous stop (H) at Colinton Road is accessible for Route 128 towards Romford Station, Route 150 towards Becontree Heath and Route 364 towards Dagenham East, also Stop K at Greenway is available for Routes 128 and 150 and Stop Y at Tulasi Medical Centre is available for Route 364",
+    "created": "2017-03-27T14:53:00Z",
+    "lastUpdate": "2017-03-27T14:54:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "RealTime",
+    "type": "stopBlocking",
+    "categoryDescription": "RealTime",
+    "description": "Southampton Row point letter B is closed due to scaffolding / building works. Works are being carried out by contractors on behalf of the London Borough of Camden and won't be reopened until June 2018. There is no safe location to put a temporary bus stop. Please use next or previous stop.",
+    "created": "2017-12-13T09:54:00Z",
+    "lastUpdate": "2017-12-13T10:02:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  },
+  {
+    "$type": "Tfl.Api.Presentation.Entities.Disruption, Tfl.Api.Presentation.Entities",
+    "category": "RealTime",
+    "type": "lineInfo",
+    "categoryDescription": "RealTime",
+    "description": "Route 221 is diverted in both directions from Lullington Garth due to a road traffic collision.  From Ballards Lane; Ballards Lane, Nether Street and Dollis Road line of route.",
+    "created": "2018-04-23T11:57:00Z",
+    "lastUpdate": "2018-04-23T12:06:00Z",
+    "affectedRoutes": [],
+    "affectedStops": []
+  }
 ]
