@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using MoreLinq;
-using TravelMateApi.Journey;
 using TravelMateApi.Models;
 
 namespace TravelMateApi.Database
 {
-    public class DatabaseFactory
+    public class DatabaseFactory : IDatabaseFactory
     {
         public void SaveJourneyToDb(DbJourney dbJourney)
         {

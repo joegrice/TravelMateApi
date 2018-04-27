@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TravelMateApi.Connection
 {
-    public class ApiConnect
+    public class ApiConnect : IApiConnect
     {
         public async Task<string> GetJson(string url)
         {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 using Newtonsoft.Json;
 using TravelMateApi.Database;
 using TravelMateApi.Models;
@@ -10,31 +9,21 @@ namespace TravelMateApi.Journey
     public class SelectJourney
     {
         private readonly string _uid;
-        private readonly string _name;
-        private readonly string _route;
-        private readonly string _startLocation;
-        private readonly string _endLocation;
-        private readonly string _time;
-        private readonly string _period;
-        private DbJourney _dbJourney;
+        private readonly DbJourney _inputJourney;
+        private DbJourney _returnJourney;
+        private readonly IDatabaseFactory _databaseFactory;
 
-        public SelectJourney(string uid, string name, string route, string startLocation, string endLocation,
-            string time,
-            string period)
+        public SelectJourney(IDatabaseFactory databaseFactory, string uid, DbJourney inputJourney)
         {
+            _inputJourney = inputJourney;
             _uid = uid;
-            _name = name;
-            _route = route;
-            _startLocation = startLocation;
-            _endLocation = endLocation;
-            _time = time;
-            _period = period;
+            _databaseFactory = databaseFactory;
         }
 
         public void Select()
         {
             SaveJourney();
-            var route = JsonConvert.DeserializeObject<GRoute>(_route);
+            var route = JsonConvert.DeserializeObject<GRoute>(_inputJourney.Route);
             var lines = new List<string>();
             foreach (var step in route.legs[0].steps)
             {
@@ -51,36 +40,34 @@ namespace TravelMateApi.Journey
 
         private void SaveJourney()
         {
-            var databaseFactory = new DatabaseFactory();
-            var dbAccount = databaseFactory.GetAccountByUid(_uid);
-            _dbJourney = new DbJourney
+            var dbAccount = _databaseFactory.GetAccountByUid(_uid);
+            _returnJourney = new DbJourney
             {
                 AccountId = dbAccount.Id,
-                Name = _name,
-                Route = _route,
-                StartLocation = _startLocation,
-                EndLocation = _endLocation,
-                Time = _time,
-                Period = _period
+                Name = _inputJourney.Name,
+                Route = _inputJourney.Route,
+                StartLocation = _inputJourney.StartLocation,
+                EndLocation = _inputJourney.EndLocation,
+                Time = _inputJourney.Time,
+                Period = _inputJourney.Period
             };
-            databaseFactory.SaveJourneyToDb(_dbJourney);
+            _databaseFactory.SaveJourneyToDb(_returnJourney);
             // Get journey from database to access journeyId
-            _dbJourney = databaseFactory.GetJourneyFromDb(_dbJourney);
+            _returnJourney = _databaseFactory.GetJourneyFromDb(_returnJourney);
         }
 
         private void UpdateLines(IEnumerable<string> lines)
         {
             lines = lines.ToList();
-            var databaseFactory = new DatabaseFactory();
             var dbLines = lines.Select(line => new DbLine { Name = line, IsDelayed = JourneyStatus.GoodService });
-            databaseFactory.SaveLines(dbLines);
+            _databaseFactory.SaveLines(dbLines);
             var dbJourneyLines = lines.Select(line => new DbJourneyLine
             {
-                JourneyId = _dbJourney.Id,
-                LineId = databaseFactory.GetLine(line).Id,
+                JourneyId = _returnJourney.Id,
+                LineId = _databaseFactory.GetLine(line).Id,
                 Notified = false.ToString()
             });
-            databaseFactory.SaveJourneyLines(dbJourneyLines);
+            _databaseFactory.SaveJourneyLines(dbJourneyLines);
         }
     }
 }
