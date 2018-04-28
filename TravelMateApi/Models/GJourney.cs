@@ -20,6 +20,7 @@
 
     public class GLeg
     {
+        public TextValue duration;
         public string end_address;
         public string start_address;
         public GStep[] steps;
@@ -38,7 +39,14 @@
 
     public class GStep
     {
+        public TextValue duration;
         public string html_instructions;
         public GTransitDetails transit_details;
+    }
+
+    public class TextValue
+    {
+        public string text;
+        public int value;
     }
 }
