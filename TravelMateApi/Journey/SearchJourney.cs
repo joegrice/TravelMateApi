@@ -17,11 +17,11 @@ namespace TravelMateApi.Journey
             _apiConnect = apiConnect;
         }
 
-        public GJourney Search()
+        public Models.Journey Search()
         {
             var url = UrlFactory.GetGoogleJourneys(_startLocation, _endLocation);
             var json = _apiConnect.GetJson(url);
-            return JsonConvert.DeserializeObject<GJourney>(json.Result);
+            return JsonConvert.DeserializeObject<Models.Journey>(json.Result);
         }
     }
 }

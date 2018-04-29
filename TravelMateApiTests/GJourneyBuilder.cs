@@ -4,11 +4,11 @@ namespace TravelMateApiTests
 {
     public class GJourneyBuilder
     {
-        private GJourney _journey;
+        private Journey _journey;
 
         public GJourneyBuilder()
         {
-            _journey = new GJourney
+            _journey = new Journey
             {
                 name = "Journey Name",
                 time = "12:23",
@@ -38,26 +38,26 @@ namespace TravelMateApiTests
 
         public GJourneyBuilder AddRoute(string instruction, string lineName)
         {
-            var transitDetails = new GTransitDetails
+            var transitDetails = new TransitDetails
             {
-                line = new GLine
+                line = new Line
                 {
                     name = lineName,
                     short_name = lineName + "Short"
                 }
             };
-            var step = new GStep()
+            var step = new Step()
             {
                 html_instructions = instruction,
                 transit_details = transitDetails
             };
-            var leg = new GLeg()
+            var leg = new Leg()
             {
                 start_address = _journey.from,
                 end_address = _journey.to,
                 steps = new[] { step }
             };
-            var route = new GRoute
+            var route = new Route
             {
                 legs = new[] { leg }
             };
@@ -81,7 +81,7 @@ namespace TravelMateApiTests
             return this;
         }
 
-        public GJourney Build()
+        public Journey Build()
         {
             return _journey;
         }

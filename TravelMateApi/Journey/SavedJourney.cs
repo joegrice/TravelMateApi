@@ -15,12 +15,12 @@ namespace TravelMateApi.Journey
             _uid = uid;
         }
 
-        public List<GJourney> GetUserSavedJourneys()
+        public List<Models.Journey> GetUserSavedJourneys()
         {
             var databaseFactory = new DatabaseFactory();
             var dbJourneys = databaseFactory.GetJourneysForUid(_uid);
 
-            var journeys = new List<GJourney>();
+            var journeys = new List<Models.Journey>();
             foreach (var dbJourney in dbJourneys)
             {
                 var journey = BuildSavedJourney(dbJourney, databaseFactory);
@@ -30,9 +30,9 @@ namespace TravelMateApi.Journey
             return journeys;
         }
 
-        private static GJourney BuildSavedJourney(DbJourney dbJourney, DatabaseFactory databaseFactory)
+        private static Models.Journey BuildSavedJourney(DbJourney dbJourney, DatabaseFactory databaseFactory)
         {
-            var journey = new GJourney
+            var journey = new Models.Journey
             {
                 id = dbJourney.Id,
                 name = dbJourney.Name,
@@ -41,7 +41,7 @@ namespace TravelMateApi.Journey
                 time = dbJourney.Time,
                 period = dbJourney.Period
             };
-            var deserializeObject = JsonConvert.DeserializeObject<GRoute>(dbJourney.Route);
+            var deserializeObject = JsonConvert.DeserializeObject<Route>(dbJourney.Route);
             if (deserializeObject != null)
             {
                 var arr = new[] { deserializeObject };

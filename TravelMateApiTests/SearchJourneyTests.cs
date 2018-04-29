@@ -13,7 +13,7 @@ namespace TravelMateApiTests
     {
         private string _startLocation;
         private string _endLocation;
-        private GJourney _journey;
+        private Journey _journey;
         private IApiConnect _apiConnect;
 
         private void SetUp()

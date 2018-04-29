@@ -23,7 +23,7 @@ namespace TravelMateApi.Journey
         public void Select()
         {
             SaveJourney();
-            var route = JsonConvert.DeserializeObject<GRoute>(_inputJourney.Route);
+            var route = JsonConvert.DeserializeObject<Route>(_inputJourney.Route);
             var lines = new List<string>();
             foreach (var step in route.legs[0].steps)
             {
