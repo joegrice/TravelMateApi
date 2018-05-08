@@ -29,7 +29,8 @@ namespace TravelMateApi.Journey
             {
                 if (step.transit_details?.line != null)
                 {
-                    var name = !step.transit_details.line.short_name.Equals("null") ?
+                    var name = step.transit_details.line.short_name != null
+                        && !step.transit_details.line.short_name.Equals("null") ?
                         step.transit_details.line.short_name : step.transit_details.line.name;
                     lines.Add(name);
                 }
